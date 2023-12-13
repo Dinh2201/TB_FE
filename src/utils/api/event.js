@@ -3,6 +3,9 @@ import { request } from "./request";
 export const create = async (payload) =>
   await request.post("/api/event", payload);
 
+export const removeEvent = async (id) =>
+  await request.delete("/api/event/" + id);
+
 export const getListEvent = async (query) =>
   await request.get(
     "/api/event/search?" + new URLSearchParams(query).toString()

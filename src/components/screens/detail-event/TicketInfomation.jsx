@@ -62,7 +62,10 @@ function TicketInfomation({ ticket, eventId }) {
         user: user?._id,
       });
       console.log("hello");
-      notify("success", "Đặt vé thành công vui lòng check email");
+      notify(
+        "success",
+        "Đặt vé thành công. Nếu bạn đã cài đặt mail vui lòng check email"
+      );
     } catch (e) {
       console.log(e);
     }

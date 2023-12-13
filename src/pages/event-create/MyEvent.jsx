@@ -10,9 +10,10 @@ import {
   Stack,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { myEvent } from "../../utils/api/event";
+import { myEvent, removeEvent } from "../../utils/api/event";
 import ModalUpdate from "../../components/common/ModalUpdate";
 import { listTypeEvent } from "../../contstant";
+import { notify } from "../../utils/helpers/notify";
 
 export default function MyEvent() {
   const [listEvent, setListEvent] = useState([]);
@@ -61,7 +62,7 @@ export default function MyEvent() {
     {
       field: "",
       headerName: "Hành động",
-      width: 150,
+      width: 250,
       renderCell: (params) => (
         <Box display={"flex"} gap={1}>
           <Button
@@ -71,6 +72,16 @@ export default function MyEvent() {
           >
             Chi tiết
           </Button>
+          {params?.row?.isApprove === 0 && (
+            <Button
+              variant="contained"
+              size="small"
+              color="error"
+              onClick={() => handeleDelete(params.row?.id)}
+            >
+              Xóa
+            </Button>
+          )}
         </Box>
       ),
     },
@@ -82,22 +93,31 @@ export default function MyEvent() {
     setIsOpen(true);
   };
 
+  const handeleDelete = async (id) => {
+    try {
+      await removeEvent(id);
+      getListData();
+      notify("success", "Xóa sự kiện thành công");
+    } catch (error) {}
+  };
+
   const handleClear = (data) => {
     setInfoEvent([]);
     setInfoTicket({});
     setIsOpen(false);
   };
 
+  const getListData = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const res = await myEvent(user?._id);
+      setListEvent(res.data?.map((i) => ({ id: i._id, ...i })));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    const getListData = async () => {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        const res = await myEvent(user?._id);
-        setListEvent(res.data?.map((i) => ({ id: i._id, ...i })));
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getListData();
   }, []);
 
